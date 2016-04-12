@@ -68,6 +68,17 @@ public final class ActionsIoUtils {
         };
     }
 
+    public static ActionSerializer toMethodJson(TreeContext sctx, List<Action> actions,
+                                          MappingStore mappings) throws IOException {
+        return new ActionSerializer(sctx, mappings, actions) {
+
+            @Override
+            protected ActionFormatter newFormatter(TreeContext ctx, Writer writer) throws Exception {
+                return new MethodJsonFormatter(ctx, writer);
+            }
+        };
+    }
+
     public abstract static class ActionSerializer extends AbstractSerializer {
         final TreeContext context;
         final MappingStore mappings;

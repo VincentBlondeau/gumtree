@@ -26,6 +26,8 @@ import java.io.*;
 
 public abstract class TreeGenerator {
 
+    protected String path; //only used for Java JDT parsing to get the bindings
+
     protected abstract TreeContext generate(Reader r) throws IOException;
 
     public TreeContext generateFromReader(Reader r) throws IOException {
@@ -35,6 +37,7 @@ public abstract class TreeGenerator {
     }
 
     public TreeContext generateFromFile(String path) throws IOException {
+        this.path = path;
         return generateFromReader(new FileReader(path));
     }
 
@@ -43,7 +46,9 @@ public abstract class TreeGenerator {
     }
 
     public TreeContext generateFromStream(InputStream stream) throws IOException {
-        return generateFromReader(new InputStreamReader(stream));
+
+
+    return generateFromReader(new InputStreamReader(stream));
     }
 
     public TreeContext generateFromString(String content) throws IOException {

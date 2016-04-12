@@ -22,8 +22,6 @@ package com.github.gumtreediff.gen.jdt;
 
 import com.github.gumtreediff.gen.TreeGenerator;
 import com.github.gumtreediff.tree.TreeContext;
-import com.github.gumtreediff.gen.TreeGenerator;
-import com.github.gumtreediff.tree.TreeContext;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -31,6 +29,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
@@ -48,11 +47,11 @@ public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
         }
         br.close();
 
-        return  fileData.toString().toCharArray();
+        return fileData.toString().toCharArray();
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public TreeContext generate(Reader r) throws IOException {
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -63,6 +62,17 @@ public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
         pOptions.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
         parser.setCompilerOptions(pOptions);
         parser.setSource(readerToCharArray(r));
+        if(path != null) {
+            //We can resolve th bindings ;)
+            parser.setBindingsRecovery(true);
+            String[] paths = new String[1];
+            paths[0] = Paths.get(path).getParent().toString();
+            String[] encoding = new String[1];
+            encoding[0] = ("UTF-8");
+            parser.setEnvironment(paths, paths, null, true);
+            parser.setUnitName("toto");
+            parser.setResolveBindings(true);
+        }
         AbstractJdtVisitor v = createVisitor();
         parser.createAST(null).accept(v);
         return v.getTreeContext();
