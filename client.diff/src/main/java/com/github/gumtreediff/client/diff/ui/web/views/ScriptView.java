@@ -23,7 +23,7 @@ package com.github.gumtreediff.client.diff.ui.web.views;
 import com.github.gumtreediff.actions.ActionGenerator;
 import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.gen.Generators;
-import com.github.gumtreediff.io.ActionsIoUtils;
+import com.github.gumtreediff.io.actionserializers.ActionsIoUtils;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
