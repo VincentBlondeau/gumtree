@@ -4,6 +4,7 @@ import com.github.gumtreediff.actions.model.*;
 import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 import com.google.gson.stream.JsonWriter;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.IOException;
@@ -36,23 +37,23 @@ class MethodJsonFormatter implements ActionFormatter {
     @Override
     public void insertAction(ITree node, ITree parent, int index) throws IOException {
         start(Insert.class, node);
-        writer.name("parent").value(parent.getId());
-        writer.name("at").value(index);
+        //writer.name("parent").value(parent.getId());
+      //  writer.name("at").value(index);
         end(node);
     }
 
     @Override
     public void moveAction(ITree src, ITree dst, int index) throws IOException {
         start(Move.class, src);
-        writer.name("parent").value(dst.getId());
-        writer.name("at").value(index);
+     //   writer.name("parent").value(dst.getId());
+     //   writer.name("at").value(index);
         end(src);
     }
 
     @Override
     public void updateAction(ITree src, ITree dst) throws IOException {
         start(Update.class, src);
-        writer.name("label").value(dst.getLabel());
+     //   writer.name("label").value(dst.getLabel());
         end(src);
     }
 
@@ -64,21 +65,13 @@ class MethodJsonFormatter implements ActionFormatter {
 
     private void start(Class<? extends Action> name, ITree src) throws IOException {
         writer.beginObject();
-//        src.getParents().stream().map(
-//                node ->  (context.getTypeLabel(node))
-//        ).toArray();
-//        context.getTypeLabel(src.getParent());
-//        context.getMetadata(src.getParent());
-//        src.getParent().getChildren().stream().map(node -> (node.toShortString())).toArray();
-//        //(ASTNode)src.getParent().getMetadata("ASTNode");
-//        src.getParent().getChildren().stream().map(toto->(toto.toShortString()));
-//        src.getParent().getParent().toPrettyString(context);
-//
-//        context.getMetadata(src);
-//        context.getTypeLabel(src);
-//        src.toPrettyString(context);
-        writer.name("action").value(name.getSimpleName().toLowerCase());
-        writer.name("tree").value(src.getId());
+        ASTNameConverter converter = new ASTNameConverter();
+        ASTNode node = (ASTNode)src.getMetadata("ASTNode");
+       // System.out.println("NODE "+ node.getClass().toString() + ":" + node.toString());
+        node.accept(converter);
+        writer.name("type").value(name.getSimpleName());
+        writer.name("name").value(converter.getOutput());
+
     }
 
     private void end(ITree node) throws IOException {
