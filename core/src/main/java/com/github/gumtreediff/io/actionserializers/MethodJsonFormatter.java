@@ -67,11 +67,11 @@ class MethodJsonFormatter implements ActionFormatter {
         writer.beginObject();
         ASTNameConverter converter = new ASTNameConverter();
         ASTNode node = (ASTNode)src.getMetadata("ASTNode");
-       // System.out.println("NODE "+ node.getClass().toString() + ":" + node.toString());
         node.accept(converter);
+        writer.name("label").value(src.getLabel());
         writer.name("type").value(name.getSimpleName());
-        writer.name("name").value(converter.getOutput());
-
+        writer.name("astType").value(node.getClass().getSimpleName());
+        writer.name("qualifiedParentName").value(converter.getOutput());
     }
 
     private void end(ITree node) throws IOException {

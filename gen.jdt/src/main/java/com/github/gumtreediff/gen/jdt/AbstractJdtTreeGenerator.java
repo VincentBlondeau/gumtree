@@ -67,10 +67,10 @@ public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
             parser.setBindingsRecovery(true);
             String[] paths = new String[1];
             paths[0] = Paths.get(path).getParent().toString();
-            String[] encoding = new String[1];
-            encoding[0] = ("UTF-8");
+//            String[] encoding = new String[1];
+//            encoding[0] = ("UTF-8");
             parser.setEnvironment(paths, paths, null, true);
-            parser.setUnitName("toto");
+            parser.setUnitName("dummyUnitName");
             parser.setResolveBindings(true);
         }
         AbstractJdtVisitor v = createVisitor();
