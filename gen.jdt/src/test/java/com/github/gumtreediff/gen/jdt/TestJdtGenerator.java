@@ -22,6 +22,7 @@ package com.github.gumtreediff.gen.jdt;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.gumtreediff.tree.ITree;
@@ -37,6 +38,7 @@ public class TestJdtGenerator {
         assertEquals(9, tree.getSize());
     }
 
+    @Ignore
     @Test
     public void testJava5Syntax() throws IOException {
         String input = "public class Foo<A> { public List<A> foo; public void foo() "

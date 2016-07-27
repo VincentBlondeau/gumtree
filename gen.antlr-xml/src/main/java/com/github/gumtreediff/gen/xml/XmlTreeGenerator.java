@@ -48,7 +48,6 @@ public class XmlTreeGenerator extends AbstractAntlrTreeGenerator {
         }
         return ctx;
     }
-
     @Override
     protected CommonTree getStartSymbol(Reader r) throws RecognitionException, IOException {
         ANTLRStringStream stream = new ANTLRReaderStream(r);

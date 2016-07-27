@@ -115,6 +115,13 @@ public abstract class SubtreeMatcher extends Matcher {
 
         @SuppressWarnings("unchecked")
         public PriorityTreeList(ITree tree) {
+            if(tree == null){
+                //todo remove
+                maxHeight = 0;
+                currentIdx = -1;
+                trees = (List<ITree>[]) new ArrayList[0];
+                return;
+            }
             int listSize = tree.getHeight() - MIN_HEIGHT + 1;
             if (listSize < 0)
                 listSize = 0;

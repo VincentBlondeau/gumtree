@@ -20,7 +20,6 @@
 
 package com.github.gumtreediff.client.diff;
 
-import com.github.gumtreediff.client.Option;
 import com.github.gumtreediff.client.Client;
 import com.github.gumtreediff.client.Option;
 import com.github.gumtreediff.gen.Generators;
@@ -47,7 +46,7 @@ public abstract class AbstractDiffClient<O extends AbstractDiffClient.Options> e
 
         @Override
         public Option[] values() {
-            return new Option[] {
+            return new Option[]{
                     new Option("-m", "The qualified name of the class implementing the matcher.", 1) {
                         @Override
                         protected void process(String name, String[] args) {
@@ -124,7 +123,10 @@ public abstract class AbstractDiffClient<O extends AbstractDiffClient.Options> e
     private TreeContext getTreeContext(String file) {
         try {
             TreeContext t = Generators.getInstance().getTree(file);
+
             return t;
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }

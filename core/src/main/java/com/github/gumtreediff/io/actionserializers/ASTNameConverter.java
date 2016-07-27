@@ -109,10 +109,49 @@ public class ASTNameConverter extends ASTVisitor {
 
     public boolean visit(VariableDeclarationFragment astNode) {
         astNode.getParent().accept(this);
-        output = fullyQualClass.peek() + "." + astNode.getName().getIdentifier();
+        if ((astNode.getParent() instanceof FieldDeclaration) &&
+                ((FieldDeclaration) astNode.getParent()).getType().toString().equals("extend")) {
+            output += astNode.getName().getIdentifier();
+
+        } else {
+            output = fullyQualClass.peek() + "." + astNode.getName().getIdentifier();
+        }
         return false;
     }
 
+    public boolean visit(FieldDeclaration astNode) {
+
+        astNode.getParent().accept(this);
+        if (astNode.getType().toString().equals("extend")) {
+            output += "-extends-";
+        }
+        return false;
+    }
+
+    public boolean visit(Initializer astNode) {
+        astNode.getParent().accept(this);
+        output += ";<initializer>";
+        return false;
+    }
+
+    public boolean visit(NormalAnnotation astNode) {
+
+        astNode.getParent().accept(this);
+        output += ";@" + astNode.getTypeName();
+        return false;
+    }
+
+    public boolean visit(SingleMemberAnnotation astNode) {
+        astNode.getParent().accept(this);
+        output += ";@" + astNode.getTypeName();
+        return false;
+    }
+
+    public boolean visit(MarkerAnnotation astNode) {
+        astNode.getParent().accept(this);
+        output += ";@" + astNode.getTypeName();
+        return false;
+    }
 
     public boolean visit(TypeDeclaration node) {
         this.visit((AbstractTypeDeclaration) node);
@@ -163,7 +202,8 @@ public class ASTNameConverter extends ASTVisitor {
 
 
     public boolean visit(ImportDeclaration astNode) {
-        output = "Change Import Decl:" + astNode.getName().getFullyQualifiedName();
+        //output = "Change Import Decl:" + astNode.getName().getFullyQualifiedName();
+        //en s'en fiche des imports
         return false;
     }
 
@@ -199,11 +239,6 @@ public class ASTNameConverter extends ASTVisitor {
         return false;
     }
 
-
-    public boolean visit(FieldDeclaration astNode) {
-        astNode.getParent().accept(this);
-        return false;
-    }
 
     public boolean visit(EnumConstantDeclaration astNode) {
         astNode.getParent().accept(this);
@@ -382,11 +417,6 @@ public class ASTNameConverter extends ASTVisitor {
         return false;
     }
 
-    public boolean visit(Initializer astNode) {
-
-        astNode.getParent().accept(this);
-        return false;
-    }
 
     public boolean visit(InstanceofExpression astNode) {
 
@@ -421,13 +451,6 @@ public class ASTNameConverter extends ASTVisitor {
     }
 
     public boolean visit(LineComment astNode) {
-
-        astNode.getParent().accept(this);
-        return false;
-    }
-
-
-    public boolean visit(MarkerAnnotation astNode) {
 
         astNode.getParent().accept(this);
         return false;
@@ -476,13 +499,6 @@ public class ASTNameConverter extends ASTVisitor {
     }
 
 
-    public boolean visit(NormalAnnotation astNode) {
-
-        astNode.getParent().accept(this);
-        return false;
-    }
-
-
     public boolean visit(NullLiteral astNode) {
 
         astNode.getParent().accept(this);
@@ -523,13 +539,6 @@ public class ASTNameConverter extends ASTVisitor {
     }
 
     public boolean visit(QualifiedType astNode) {
-
-        astNode.getParent().accept(this);
-        return false;
-    }
-
-
-    public boolean visit(SingleMemberAnnotation astNode) {
 
         astNode.getParent().accept(this);
         return false;

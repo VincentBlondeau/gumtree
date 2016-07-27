@@ -25,6 +25,7 @@ import com.github.gumtreediff.gen.Registry;
 import com.github.gumtreediff.gen.TreeGenerator;
 import org.reflections.Reflections;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -82,13 +83,14 @@ public class Run {
         initGenerators();
     }
 
-    public static void startClient(String name, Registry.Factory<? extends Client> client, String[] args) {
+    public static void startClient(String name, Registry.Factory<? extends Client> client, String[] args) throws IOException {
         try {
             Client inst = client.newInstance(new Object[]{args});
             try {
                 inst.run();
             } catch (Exception e) {
                 System.err.printf("** Error while running client %s: %s\n", name, e);
+                throw e;
             }
         } catch (InvocationTargetException e) {
             System.err.printf("** Error while parsing option for %s:\n%s\n", name, e.getCause());
@@ -98,7 +100,7 @@ public class Run {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         initClients();
 
         Options opts = new Options();

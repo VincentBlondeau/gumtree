@@ -23,18 +23,14 @@ package com.github.gumtreediff.client.diff;
 import com.github.gumtreediff.actions.ActionGenerator;
 import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.client.Register;
-import com.github.gumtreediff.client.diff.ui.web.HtmlDiffs;
-import com.github.gumtreediff.client.diff.ui.web.MethodHtmlDiffs;
-import com.github.gumtreediff.gen.Generators;
 import com.github.gumtreediff.io.actionserializers.ActionsIoUtils;
+import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.matchers.Matcher;
-import com.github.gumtreediff.matchers.Matchers;
+import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Register(name = "methoddiff", description = "Dump actions in the JSON format",
         options = AbstractDiffClient.Options.class)
@@ -67,17 +63,72 @@ public class MethodDiff extends AbstractDiffClient<AbstractDiffClient.Options> {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+        MappingStore mappingStore = new MappingStore();
+        boolean fakeTreeCreated = false;
+        try {
+            Matcher m = matchTrees();
+            mappingStore = m.getMappings();
+        } catch (UnsupportedOperationException e) {
+            // With have to delete the fake tree we created
+            fakeTreeCreated = true;
+        }
+//
+//    }catch (UnsupportedOperationException e){
+//        //Create fake tree that
+//        TreeContext emptyTreeContext = new TreeContext();
+//        ITree newTree = emptyTreeContext.createTree();
+//        newTree.setId(-1);
+//        emptyTreeContext.setRoot(newTree);
+//        return emptyTreeContext;
+//    }
+
+        ITree srcTree;
+        try {
+            srcTree = getSrcTreeContext().getRoot();
+        } catch (UnsupportedOperationException e2) {
+            //Create fake tree that
+            TreeContext emptyTreeContext1 = new TreeContext();
+            srcTree = emptyTreeContext1.createTree(-1, "FAKE", "FAKE");
+            srcTree.setId(-1);
+            // emptyTreeContext.setRoot(newTree);
+            // srcTree = emptyTreeContext;
+        }
+
+        ITree dstTree;
+        try {
+            dstTree = getDstTreeContext().getRoot();
+        } catch (UnsupportedOperationException e1) {
+            //Create fake tree that
+            TreeContext emptyTreeContext = new TreeContext();
+            dstTree = emptyTreeContext.createTree(-1, "FAKE", "FAKE");
+            dstTree.setId(-1);
+            // emptyTreeContext.setRoot(newTree);
+            // srcTree = emptyTreeContext;
+        }
 
 
-        Matcher m = matchTrees();
-        ActionGenerator g = new ActionGenerator(getSrcTreeContext().getRoot(),
-                getDstTreeContext().getRoot(), m.getMappings());
+        ActionGenerator g = new ActionGenerator(srcTree,
+                dstTree, mappingStore);
         g.generate();
         List<Action> actions = g.getActions();
         try {
-            ActionsIoUtils.toMethodJson(getSrcTreeContext(), actions, m.getMappings()).writeTo(System.out);
+            if (fakeTreeCreated) {
+                //remove the tree
+                actions = actions.stream().filter(item -> (item.getNode().getId() != -1)).collect(Collectors.toList());
+               // System.out.println(actions);
+            }
+
+            try {
+                ActionsIoUtils.toMethodJson(getSrcTreeContext(), actions, mappingStore).writeTo(System.out);
+            } catch (UnsupportedOperationException e) {
+                //So it is maybe that source file doesn"t exists or is empty...
+                ActionsIoUtils.toMethodJson(getDstTreeContext(), actions, mappingStore).writeTo(System.out);
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

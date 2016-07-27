@@ -29,6 +29,7 @@ public class TreeMap {
 
     public TreeMap(ITree tree) {
         trees = new TIntObjectHashMap<>();
+        if(tree==null) {return;}
         for (ITree t: tree.getTrees())
             trees.put(t.getId(), t);
     }

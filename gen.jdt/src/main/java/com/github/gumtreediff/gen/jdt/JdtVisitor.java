@@ -59,7 +59,7 @@ public class JdtVisitor  extends AbstractJdtVisitor {
 
     @Override
     public boolean visit(QualifiedName name) {
-        return false;
+        return true;
     }
 
     @Override
