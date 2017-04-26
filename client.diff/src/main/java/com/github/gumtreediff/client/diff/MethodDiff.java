@@ -29,6 +29,7 @@ import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,10 @@ public class MethodDiff extends AbstractDiffClient<AbstractDiffClient.Options> {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+        if(!(Paths.get(opts.dst).getFileName().toString().endsWith(".java")
+                ||  Paths.get(opts.src).getFileName().toString().endsWith(".java")))
+            return;
+
         MappingStore mappingStore = new MappingStore();
         boolean fakeTreeCreated = false;
         try {
